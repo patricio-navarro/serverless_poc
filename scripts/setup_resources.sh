@@ -36,7 +36,7 @@ echo "=================================================="
 
 # 1. Create GCS Bucket
 echo ""
-echo "[1/5] Checking GCS Bucket..."
+echo "[1/9] Checking GCS Bucket..."
 if gcloud storage buckets describe "gs://$BUCKET_NAME" --project="$GOOGLE_CLOUD_PROJECT" > /dev/null 2>&1; then
     echo "✅ Bucket 'gs://$BUCKET_NAME' already exists."
 else
@@ -55,7 +55,7 @@ echo "✅ Bucket is now public."
 
 # 2. Create Pub/Sub Schema
 echo ""
-echo "[2/5] Checking Pub/Sub Schema..."
+echo "[2/9] Checking Pub/Sub Schema..."
 if gcloud pubsub schemas describe "$SCHEMA_ID" --project="$GOOGLE_CLOUD_PROJECT" > /dev/null 2>&1; then
     echo "✅ Schema '$SCHEMA_ID' already exists."
 else
@@ -69,7 +69,7 @@ fi
 
 # 3. Create BigQuery Dataset and Table
 echo ""
-echo "[3/5] Checking BigQuery Dataset & Table..."
+echo "[3/9] Checking BigQuery Dataset & Table..."
 if bq show --project_id="$GOOGLE_CLOUD_PROJECT" "$BIGQUERY_DATASET" > /dev/null 2>&1; then
     echo "✅ Dataset '$BIGQUERY_DATASET' already exists."
 else
@@ -92,7 +92,7 @@ fi
 
 # 4. Create Pub/Sub Topic with Schema
 echo ""
-echo "[4/5] Checking Pub/Sub Topic..."
+echo "[4/9] Checking Pub/Sub Topic..."
 if gcloud pubsub topics describe "$TOPIC_ID" --project="$GOOGLE_CLOUD_PROJECT" > /dev/null 2>&1; then
     echo "✅ Topic '$TOPIC_ID' already exists."
     # Note: Updating schema on existing topic is complex/limited. Assuming it matches if exists.
