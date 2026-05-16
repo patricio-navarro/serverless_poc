@@ -105,9 +105,22 @@ else
     echo "✅ Topic created."
 fi
 
-# 5. Create BigQuery Subscription
+# 5. Grant Pub/Sub service account BigQuery permissions (required for BQ subscriptions)
 echo ""
-echo "[5/5] Checking BigQuery Subscription..."
+echo "[5/9] Granting Pub/Sub service account BigQuery permissions..."
+PROJECT_NUMBER=$(gcloud projects describe "$GOOGLE_CLOUD_PROJECT" --format="value(projectNumber)")
+PUBSUB_SA="service-${PROJECT_NUMBER}@gcp-sa-pubsub.iam.gserviceaccount.com"
+
+gcloud projects add-iam-policy-binding "$GOOGLE_CLOUD_PROJECT" \
+    --member="serviceAccount:$PUBSUB_SA" \
+    --role="roles/bigquery.dataEditor" \
+    --condition=None \
+    --quiet > /dev/null 2>&1
+echo "✅ Pub/Sub service account granted BigQuery Data Editor."
+
+# 6. Create BigQuery Subscription
+echo ""
+echo "[6/9] Checking BigQuery Subscription..."
 if gcloud pubsub subscriptions describe "$SUBSCRIPTION_ID" --project="$GOOGLE_CLOUD_PROJECT" > /dev/null 2>&1; then
     echo "✅ Subscription '$SUBSCRIPTION_ID' already exists."
 else
@@ -121,9 +134,9 @@ else
     echo "✅ Subscription created."
 fi
 
-# 6. Create Firestore Database (Native Mode)
+# 7. Create Firestore Database (Native Mode)
 echo ""
-echo "[6/6] Checking Firestore Database..."
+echo "[7/9] Checking Firestore Database..."
 # Check if default database exists
 if gcloud firestore databases list --project="$GOOGLE_CLOUD_PROJECT" --format="value(name)" | grep -q "projects/$GOOGLE_CLOUD_PROJECT/databases/(default)"; then
     echo "✅ Firestore database '(default)' already exists."
@@ -133,9 +146,9 @@ else
     echo "✅ Firestore database created."
 fi
 
-# 7. Create Firestore Composite Index
+# 8. Create Firestore Composite Index
 echo ""
-echo "[7/7] Checking Firestore Indexes..."
+echo "[8/9] Checking Firestore Indexes..."
 # We try to create it. If it exists, it returns a message but exits 0 or similar (or we can ignore "already exists" error).
 # The most robust way is to just run it and catch failure if it's "Already exists", but gcloud might fail hard.
 # Let's check if we can list it, but list parsing is annoying. 
@@ -155,9 +168,9 @@ gcloud firestore indexes composite create \
     --project="$GOOGLE_CLOUD_PROJECT" \
     --quiet || echo "⚠️ Index creation might have failed or already exists."
 
-# 8. Grant Service Account Token Creator Role (For Signed URLs)
+# 9. Grant Service Account Token Creator Role (For Signed URLs)
 echo ""
-echo "[8/8] Checking IAM Permissions..."
+echo "[9/9] Checking IAM Permissions..."
 PROJECT_NUMBER=$(gcloud projects describe "$GOOGLE_CLOUD_PROJECT" --format="value(projectNumber)")
 SERVICE_ACCOUNT="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
 

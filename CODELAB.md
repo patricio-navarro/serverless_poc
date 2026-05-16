@@ -105,8 +105,11 @@ This application requires two sets of external credentials that you need to obta
 
 1. In the Cloud Console, go to **APIs & Services → Credentials**.
 2. Click **+ Create Credentials → API Key**.
-3. Copy the generated key and save it somewhere safe — this is your `GOOGLE_MAPS_API_KEY`.
-4. (Recommended) Click **Edit API key** and restrict it to the **Maps JavaScript API** and **Geocoding API** to improve security.
+![Create Credentials](image-3.png)
+3. Restrict it to the **Maps JavaScript API** and **Geocoding API** to improve security.
+![Restrict the API key](image-4.png)
+4. Copy the generated key and save it somewhere safe — this is your `GOOGLE_MAPS_API_KEY`.
+
 
 ### 4b. Create OAuth 2.0 Credentials (Google Sign-In)
 
@@ -115,10 +118,11 @@ The application uses Google OAuth 2.0 to let users log in with their Google acco
 1. In the Cloud Console, go to **APIs & Services → Credentials**.
 2. Click **+ Create Credentials → OAuth 2.0 Client ID**.
 3. If prompted, configure the **OAuth Consent Screen** first:
-   - Set **User Type** to `External`.
    - Fill in an app name (e.g., `Dog Finder`) and your email address.
-   - Add your Cloud Run URL as an **Authorized domain** (you can update this after deployment).
+   - Set **User Type** to `External`.
+   ![alt text](image-5.png)
    - Click **Save and Continue** through the remaining screens.
+   ![alt text](image-6.png)
 4. Back on the Credentials page, click **+ Create Credentials → OAuth 2.0 Client ID** again.
 5. For **Application type**, select **Web application**.
 6. Under **Authorized redirect URIs**, click **+ Add URI** and enter:
@@ -126,6 +130,7 @@ The application uses Google OAuth 2.0 to let users log in with their Google acco
    http://localhost:8080/auth/callback
    ```
    *(You will add your Cloud Run URL here after deployment.)*
+   ![alt text](image-7.png)
 7. Click **Create**. A dialog will show your **Client ID** and **Client Secret** — save both.
 
 ---
@@ -196,10 +201,13 @@ A helper script provisions all the required cloud resources automatically.
 | 2 | **Pub/Sub Schema** | Creates an Avro schema to enforce the event message format |
 | 3 | **BigQuery Dataset & Table** | Creates a time-partitioned table for sighting events |
 | 4 | **Pub/Sub Topic** | Creates a topic linked to the Avro schema |
-| 5 | **BigQuery Subscription** | Links the Pub/Sub topic directly to BigQuery for streaming inserts |
-| 6 | **Firestore Database** | Initializes the default Firestore (Native mode) database |
-| 7 | **Firestore Indexes** | Creates composite indexes needed for querying sightings |
-| 8 | **IAM Permissions** | Grants the compute service account the Token Creator role (for signed URLs) |
+| 5 | **Pub/Sub IAM** | Grants the Pub/Sub service account `bigquery.dataEditor` (required for step 6) |
+| 6 | **BigQuery Subscription** | Links the Pub/Sub topic directly to BigQuery for streaming inserts |
+| 7 | **Firestore Database** | Initializes the default Firestore (Native mode) database |
+| 8 | **Firestore Indexes** | Creates composite indexes needed for querying sightings |
+| 9 | **IAM Permissions** | Grants the compute service account the Token Creator role (for signed URLs) |
+
+> **Note:** Step 5 is critical — BigQuery subscriptions require the Pub/Sub service account (`service-PROJECT_NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com`) to have `roles/bigquery.dataEditor` on your project. Without it, step 6 will fail with a permissions error.
 
 ---
 
