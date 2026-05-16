@@ -127,8 +127,8 @@ The application uses Google OAuth 2.0 to let users log in with their Google acco
 In Cloud Shell (or your local terminal if you have `gcloud` installed):
 
 ```bash
-git clone <YOUR_REPOSITORY_URL>
-cd <REPOSITORY_NAME>
+git clone https://github.com/patricio-navarro/serverless_poc.git
+cd serverless_poc
 ```
 
 ### Configure Environment Variables
