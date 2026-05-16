@@ -41,14 +41,24 @@ If you don't already have a Google account, [create one here](https://accounts.g
 4. Enter a descriptive name (e.g., `dog-finder-codelab`). Take note of the auto-generated **Project ID** — you'll use it throughout this lab.
 5. Click **Create**.
 
+![Create project](image.png)
+
 > **Note:** Your Project ID is different from the project name. The Project ID is a unique, permanent identifier (e.g., `dog-finder-codelab-123456`). You can always find it on the Cloud Console home page.
+
+![Proyect created](image-1.png)
 
 ### Enable Billing
 
-Running this codelab should cost no more than a few dollars. New Google Cloud users are eligible for a **[$300 free trial credit](https://console.developers.google.com/billing/freetrial)** — activate it now if you haven't already.
+> ⚠️ **This step is required.** Cloud Run, Cloud Build, and several other services used in this codelab require a billing account linked to your project. Without it, the API activation step will fail.
 
-1. In the Cloud Console, go to **Billing**.
-2. Link a billing account to your project.
+New Google Cloud users are eligible for a **[$300 free trial credit](https://console.developers.google.com/billing/freetrial)** which is more than enough to complete this lab.
+
+![alt text](image-2.png)
+
+1. In the [Cloud Console](https://console.cloud.google.com), open the navigation menu (☰) and go to **Billing**.
+2. Click **Link a billing account**.
+3. Select an existing billing account or click **Create account** to set up a new one and activate the free trial.
+4. Confirm the account is linked to your project — you should see your project name listed under the billing account.
 
 > **Tip:** Don't forget to run the cleanup script at the end of the codelab to avoid any ongoing charges.
 
