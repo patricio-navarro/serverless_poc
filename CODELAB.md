@@ -230,6 +230,14 @@ https://dog-finder-app-xxxxxxxxxx-uc.a.run.app
 
 **Copy this URL — you'll need it in the next step.**
 
+### Verify the Deployment
+
+To confirm the service is live, go to the [Cloud Run console](https://console.cloud.google.com/run), select your project, and check that `dog-finder-app` appears with a green checkmark and status **Running**.
+
+![Deployed service](image-8.png)
+
+> **Note:** Don't open the app URL yet — the OAuth redirect URI still needs to be configured in the next step, or the login flow will fail.
+
 ### Update OAuth Redirect URI
 
 Now that you have your Cloud Run URL, add it as an authorized redirect URI in your OAuth credentials:
@@ -254,7 +262,50 @@ Now that you have your Cloud Run URL, add it as an authorized redirect URI in yo
 
 ---
 
-## 9. Verify the Data Pipeline in BigQuery
+## 9. Tour the Architecture in the Cloud Console
+
+After submitting your first sighting, take a few minutes to explore how data flows through each component — this is the heart of what makes the app serverless.
+
+### 9a. Firestore — Application Database
+
+Every sighting is stored in Firestore as a structured document.
+
+1. Open the [Firestore Console](https://console.cloud.google.com/firestore).
+2. In the **Data** tab, select the **`(default)`** database.
+3. Click on the **`sightings`** collection — you should see a document for the sighting you just submitted, containing fields like `lat`, `lng`, `sighting_date`, `image_url`, and `timestamp`.
+
+![Firestore Console](image-9.png)
+
+> Firestore is used here as the primary real-time store powering the **Find** tab map and feed.
+
+### 9b. Cloud Storage — Image Bucket
+
+Dog sighting photos are uploaded directly to Cloud Storage.
+
+1. Open the [Cloud Storage Console](https://console.cloud.google.com/storage/browser).
+2. Click on your bucket (e.g., `dog-finder-images-abc123`).
+3. You should see the image file you uploaded, publicly accessible via a URL of the form:
+   ```
+   https://storage.googleapis.com/<BUCKET_NAME>/<filename>
+   ```
+
+![Cloud storage bucket](image-10.png)
+
+### 9c. Pub/Sub — Event Stream
+
+Every sighting submission publishes a message to a Pub/Sub topic, which triggers the streaming insert into BigQuery.
+
+1. Open the [Pub/Sub Console](https://console.cloud.google.com/cloudpubsub/topic/list).
+2. Click on **`dog-sightings-topic`**.
+3. Go to the **Subscriptions** tab and click on **`dog-sightings-topic-bq-sub`**.
+4. Click **View messages** — you can pull recent messages and inspect the Avro-encoded event payload.
+
+![PubSub subscription](image-11.png)
+> The message schema is defined in `schemas/pubsub_schema.json` and enforced on every publish.
+
+---
+
+## 10. Verify the Data Pipeline in BigQuery
 
 Every sighting submission publishes an event to Pub/Sub, which is automatically streamed into BigQuery.
 
@@ -263,23 +314,18 @@ Every sighting submission publishes an event to Pub/Sub, which is automatically 
 3. Click on the table, then click **Query**.
 4. Run the following query:
    ```sql
-   SELECT
-     dog_name,
-     breed,
-     sighting_date,
-     city,
-     timestamp
-   FROM `YOUR_PROJECT_ID.lost_dogs.publications`
-   ORDER BY timestamp DESC
-   LIMIT 10
+   SELECT *
+   FROM `dog-finder-codelab.lost_dogs.publications` 
+   LIMIT 1000
    ```
 5. You should see the event data for the sighting you just submitted!
 
+![BigQuery Console](image-12.png)
 > **Note:** It may take up to 60 seconds for events to appear in BigQuery due to the Pub/Sub subscription delivery latency.
 
 ---
 
-## 10. Clean Up
+## 11. Clean Up
 
 To avoid ongoing charges, delete all resources created in this codelab:
 
@@ -293,7 +339,7 @@ You will be prompted to confirm before any resources are deleted.
 
 ---
 
-## 11. Congratulations! 🎉
+## 12. Congratulations! 🎉
 
 You've built and deployed a production-ready serverless application on Google Cloud!
 
@@ -302,6 +348,7 @@ You've built and deployed a production-ready serverless application on Google Cl
 - ✅ Created Google Maps and OAuth credentials
 - ✅ Provisioned Cloud Storage, Pub/Sub, BigQuery, and Firestore
 - ✅ Deployed a containerized Python app to Cloud Run
+- ✅ Explored each GCP service to understand how data flows end-to-end
 - ✅ Verified a real-time data pipeline flowing from the web app into BigQuery
 
 ### Next steps:
