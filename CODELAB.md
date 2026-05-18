@@ -315,7 +315,7 @@ Every sighting submission publishes an event to Pub/Sub, which is automatically 
 4. Run the following query:
    ```sql
    SELECT *
-   FROM `dog-finder-codelab.lost_dogs.publications` 
+   FROM `YOUR_PROJECT_ID.lost_dogs.publications` 
    LIMIT 1000
    ```
 5. You should see the event data for the sighting you just submitted!
