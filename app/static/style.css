@@ -286,10 +286,13 @@ main {
     overflow-y: auto;
     max-width: 1000px;
     margin: 0 auto;
-    display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-6);
     animation: slideIn var(--transition-slow);
+}
+
+#report-section.active {
+    display: grid;
 }
 
 @keyframes slideIn {
