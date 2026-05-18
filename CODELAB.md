@@ -220,8 +220,8 @@ With infrastructure in place, build and deploy the application container.
 ```
 
 **What this script does:**
-1. Builds a Docker image using **Cloud Build** and pushes it to **Container Registry**.
-2. Deploys the container to **Cloud Run** with all environment variables configured automatically.
+1. Uploads your source code to **Cloud Build** (Google's managed build service) and builds the Docker image entirely in the cloud — **no local Docker installation required**.
+2. Deploys the built container to **Cloud Run** with all environment variables configured automatically.
 
 Once the deployment finishes, the command will output a **Service URL** like:
 ```
